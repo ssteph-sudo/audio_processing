@@ -3,6 +3,8 @@ import pandas as pd
 import numpy as np
 import os
 from Feature_Extraction_Frequency import extract_frequency
+from Feature_Extraction_MFCC import extract_mfcc
+from Feature_Extraction_Zero_Crossing_Rate import extract_zero_crossing
 
 
 speech_file_path = "../audio/speech/"
@@ -16,9 +18,8 @@ def generate_file_list():
     speechFiles = os.listdir(speech_file_path)
     musicFiles = os.listdir(music_file_path)
 
-    # Use only about 60 percent of the data for training data
-    speechCount = int(len(speechFiles)*2/3)
-    musicCount = int(len(musicFiles)*2/3)
+    speechCount = int(len(speechFiles))
+    musicCount = int(len(musicFiles))
 
     fileList = []
 
@@ -31,6 +32,7 @@ def generate_file_list():
         fileName = "mu" + str(file) + ".wav"
         fileList.append(fileName)
 
+    print(len(fileList))
     return fileList
 
 def generate_csv():
@@ -46,7 +48,6 @@ def generate_csv():
         label = ""
 
         # label has value “yes” if this file is a music clip and “no” if it is a speech file.
-
         if "mu" in filename:
             path = music_file_path + filename
             label = "yes"
@@ -60,13 +61,20 @@ def generate_csv():
             row.append(frequencies[frequency])
 
         # Audio Feature 2
+        mfcc_list = extract_mfcc(path)
+        for mfcc in range(len(mfcc_list)):
+            row.append(mfcc_list[mfcc])
+
         # Audio Feature 3
-        row.append(label) # Add the label for that file
+        zero_crossing_feature = extract_zero_crossing(path)
+        row.append(zero_crossing_feature)
+
+        # Label each file
+        row.append(label)
 
         data.append(row)
 
-    # using the savetxt
-    # from the numpy module
+    # Save the features as a dataframe and then a csv file
     df = pd.DataFrame(data)
     print(df.shape)
     df.to_csv('features.csv', mode='w', index=False, header=False)
