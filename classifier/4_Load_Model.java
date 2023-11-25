@@ -1,6 +1,5 @@
-// Save the model (after training and testing) for loading and deployment
-// https://waikato.github.io/weka-wiki/serialization/
-
+// Modified from https://waikato.github.io/weka-wiki/serialization/
+// Load the mode for use
 import weka.core.SerializationHelper;
 
 public Classifier load_model(Classifier cls, String filename){

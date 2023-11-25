@@ -1,5 +1,5 @@
+// Modified from https://waikato.github.io/weka-wiki/serialization/
 // Save the model (after training and testing) for loading and deployment
-// https://waikato.github.io/weka-wiki/serialization/
 
 import weka.core.SerializationHelper;
 
