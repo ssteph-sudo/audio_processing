@@ -38,6 +38,8 @@ def generate_file_list():
 def generate_csv():
     data = []
     files = generate_file_list()
+    headerList = []
+    headerList.append("fileName")
 
     for file in range(len(files)):
         row = []
@@ -56,27 +58,36 @@ def generate_csv():
             label = "no"
         
         # Audio Feature 1
-        frequencies = extract_frequency(path) # Extract frequency features
-        for frequency in range(len(frequencies)):
-            row.append(frequencies[frequency])
+        # frequencies = extract_frequency(path) # Extract frequency features
+        # for frequency in range(len(frequencies)):
+        #     row.append(frequencies[frequency])
 
         # Audio Feature 2
-        mfcc_list = extract_mfcc(path)
-        for mfcc in range(len(mfcc_list)):
-            row.append(mfcc_list[mfcc])
+        # mfcc_list = extract_mfcc(path)
+        # for mfcc in range(len(mfcc_list)):
+        #     row.append(mfcc_list[mfcc])
 
         # Audio Feature 3
         zero_crossing_feature = extract_zero_crossing(path)
         row.append(zero_crossing_feature)
 
-        # Label each file
+        # Label each audio file with a ground truth label
         row.append(label)
 
+        # Add each row to the dataset
         data.append(row)
+
+    # Add header to the csv
+    featureCount = len(data[0]) - 2
+
+    for feature in range(1, featureCount + 1):
+        headerList.append("F"+ str(feature))
+
+    headerList.append("Label")
 
     # Save the features as a dataframe and then a csv file
     df = pd.DataFrame(data)
     print(df.shape)
-    df.to_csv('features.csv', mode='w', index=False, header=False)
+    df.to_csv('features.csv', mode='w', index=False, header=headerList)
 
 generate_csv()

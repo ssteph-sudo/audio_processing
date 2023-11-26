@@ -1,5 +1,5 @@
 // Modified from https://waikato.github.io/weka-wiki/serialization/
-// Load the mode for use
+// Load the model for use
 import weka.core.SerializationHelper;
 
 public Classifier load_model(Classifier cls, String filename){
