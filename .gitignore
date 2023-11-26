@@ -25,3 +25,6 @@ replay_pid*
 
 # pycache
 feature_extraction/__pycache__/Feature_Extraction_Frequency.cpython-310.pyc
+feature_extraction/__pycache__/Feature_Extraction_Avg_Energy.cpython-310.pyc
+.gitignore
+feature_extraction/__pycache__/Feature_Extraction_MFCC.cpython-310.pyc

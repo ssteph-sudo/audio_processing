@@ -2,9 +2,9 @@ import csv
 import pandas as pd
 import numpy as np
 import os
-from Feature_Extraction_Frequency import extract_frequency
-from Feature_Extraction_MFCC import extract_mfcc
 from Feature_Extraction_Zero_Crossing_Rate import extract_zero_crossing
+from Feature_Extraction_Spectral_Centroid import extract_spectral_centroid
+from Feature_Extraction_Avg_Energy import extract_avg_energy
 
 
 speech_file_path = "../audio/speech/"
@@ -38,8 +38,7 @@ def generate_file_list():
 def generate_csv():
     data = []
     files = generate_file_list()
-    headerList = []
-    headerList.append("fileName")
+    headerList = ["fileName", "Avg_Energy", "Spectral_Centroid", "Zero_Crossing", "Label"]
 
     for file in range(len(files)):
         row = []
@@ -58,14 +57,12 @@ def generate_csv():
             label = "no"
         
         # Audio Feature 1
-        # frequencies = extract_frequency(path) # Extract frequency features
-        # for frequency in range(len(frequencies)):
-        #     row.append(frequencies[frequency])
+        avg_energy = extract_avg_energy(path)
+        row.append(avg_energy)
 
         # Audio Feature 2
-        # mfcc_list = extract_mfcc(path)
-        # for mfcc in range(len(mfcc_list)):
-        #     row.append(mfcc_list[mfcc])
+        spectral_centroid_avg = extract_spectral_centroid(path)
+        row.append(spectral_centroid_avg)
 
         # Audio Feature 3
         zero_crossing_feature = extract_zero_crossing(path)
@@ -76,14 +73,6 @@ def generate_csv():
 
         # Add each row to the dataset
         data.append(row)
-
-    # Add header to the csv
-    featureCount = len(data[0]) - 2
-
-    for feature in range(1, featureCount + 1):
-        headerList.append("F"+ str(feature))
-
-    headerList.append("Label")
 
     # Save the features as a dataframe and then a csv file
     df = pd.DataFrame(data)
