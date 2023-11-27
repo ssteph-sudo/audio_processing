@@ -35,6 +35,19 @@ def generate_file_list():
     print(len(fileList))
     return fileList
 
+def pipeline(path, row):
+    # Audio Feature 1
+    avg_energy = extract_avg_energy(path)
+    row.append(avg_energy)
+
+    # Audio Feature 2
+    spectral_centroid_avg = extract_spectral_centroid(path)
+    row.append(spectral_centroid_avg)
+
+    # Audio Feature 3
+    zero_crossing_feature = extract_zero_crossing(path)
+    row.append(zero_crossing_feature)
+
 def generate_csv():
     data = []
     files = generate_file_list()
@@ -55,18 +68,9 @@ def generate_csv():
         else:
             path = speech_file_path + filename
             label = "no"
-        
-        # Audio Feature 1
-        avg_energy = extract_avg_energy(path)
-        row.append(avg_energy)
 
-        # Audio Feature 2
-        spectral_centroid_avg = extract_spectral_centroid(path)
-        row.append(spectral_centroid_avg)
-
-        # Audio Feature 3
-        zero_crossing_feature = extract_zero_crossing(path)
-        row.append(zero_crossing_feature)
+        # Pass the file through the pipeline to extract features
+        pipeline(path, row)
 
         # Label each audio file with a ground truth label
         row.append(label)
