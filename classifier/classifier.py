@@ -46,6 +46,7 @@ def evaluate_model(model, x_test, y_test):
     print('Recall = %.6f' % recall_score(y_test, y_pred, zero_division=1))
 
 # Reference: https://youtu.be/lrShBmW8Iqs
+# Modified from https://scikit-learn.org/stable/model_persistence.html
 def save_model(model):
     pickle.dump(model, open("SVM_model.pkl", "wb"))
 

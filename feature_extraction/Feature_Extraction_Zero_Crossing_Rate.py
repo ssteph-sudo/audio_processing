@@ -11,4 +11,4 @@ def extract_zero_crossing(file_path):
     samples, sampling_rate = librosa.load(file_path)
     zero_crossings = librosa.zero_crossings(samples, pad=False)
 
-    return sum(zero_crossings) / (2*len(zero_crossings)-1)
+    return sum(zero_crossings) / (2*(len(zero_crossings)-1))
