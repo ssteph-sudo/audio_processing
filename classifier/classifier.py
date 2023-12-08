@@ -8,10 +8,13 @@ from sklearn.metrics import precision_score
 from sklearn.metrics import recall_score
 from sklearn.model_selection import train_test_split
 
+GROUND_TRUTH_LABELS = {}
+
 def split_training_and_testing_data():
 
     # Read the data
-    data = pd.read_csv('../feature_extraction/features.csv')
+    data = pd.read_csv('feature_extraction/features.csv')
+    GROUND_TRUTH_LABELS = dict(zip(data['fileName'], data['Label']))
 
     # Replace labels with 0 for speech and 1 for music
     data["Label"] = (data["Label"] == "yes").astype(int)
@@ -32,11 +35,14 @@ def split_training_and_testing_data():
     # The directions say to indicate which of the files are used for training
     print(x_train.sort_index()["fileName"])
 
-    # Remove the filename, leaving only the features
-    x_train = x_train.drop(["fileName"], axis=1)
-    x_test = x_test.drop(["fileName"], axis=1)
+    train_file_names = x_train['fileName'].tolist()
+    test_file_names = x_test['fileName'].tolist()
 
-    return x_train, x_test, y_train, y_test
+    # Drop the fileName column
+    x_train = x_train.drop(['fileName'], axis=1)
+    x_test = x_test.drop(['fileName'], axis=1)
+
+    return x_train, x_test, y_train, y_test, train_file_names, test_file_names
 
 def evaluate_model(model, x_test, y_test):
 
@@ -55,13 +61,19 @@ def load_model():
     return model
 
 def train_model():
-
-    x_train, x_test, y_train, y_test = split_training_and_testing_data()
+    
+    x_train, x_test, y_train, y_test, train_file_names, test_file_names = split_training_and_testing_data()
 
     model = svm.SVC()
+    
     model.fit(x_train, y_train)
 
     evaluate_model(model, x_test, y_test)
     save_model(model)
 
-train_model()
+    #Get ground truth labels
+    data = pd.read_csv('feature_extraction/features.csv')
+    GROUND_TRUTH_LABELS = dict(zip(data['fileName'], data['Label']))
+    test_labels = {file: GROUND_TRUTH_LABELS[file] for file in test_file_names}
+
+    return x_train, x_test, y_train, y_test, model, train_file_names, test_file_names, test_labels
