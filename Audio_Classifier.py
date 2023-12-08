@@ -5,6 +5,7 @@ import pygame
 import threading
 import pandas as pd
 from sklearn import svm
+from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from sklearn.model_selection import train_test_split
 import pickle
 import numpy as np
@@ -98,6 +99,7 @@ class AudioClassifierGUI:
         if selected_file:
             # Load the model for testing
             self.model = joblib.load('audio_classifier_model.pkl')
+            scaler = joblib.load('scaler.pkl')
             
             if selected_file in self.test_labels:
                 # Get the ground truth label from the dictionary
@@ -112,19 +114,33 @@ class AudioClassifierGUI:
                 if not selected_row.empty:
                     # Extract the features for the selected file
                     features = selected_row.drop(["Label", "fileName"], axis=1)
+                    normalized_features = scaler.transform(features)
+                    """ dummy_data = {
+                    "Label": ["yes"],  
+                    "fileName": ["mu1.wav"], 
+                    "Avg_Energy": [0.013387602993281478],  
+                    "Spectral_Centroid": [7.236733455814755],
+                    "Zero_Crossing": [0.09323464117433852],
+                     }
+                    
+                    dummy_row = pd.DataFrame(dummy_data)
+
+                    features = dummy_row.drop(["Label", "fileName"], axis=1)"""
 
                     # Debugging message to check the loaded features
                     print("Loaded Features:")
                     print(features)
+                    print("Normalized Features:")
+                    print(normalized_features)
 
                     # Predict whether the audio file contains speech or music
-                    prediction = self.model.predict(features)
+                    prediction = self.model.predict(normalized_features)
 
                     # Debugging message to check the prediction
                     print("Prediction:")
                     print(prediction)
 
-                    # Convert the prediction to a human-readable label
+                    # Convert the prediction to a readable label
                     predicted_label = "Music" if prediction[0] == 1 else "Speech"
 
                     # Display the results

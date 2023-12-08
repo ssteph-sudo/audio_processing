@@ -2,11 +2,13 @@ import pandas as pd
 import numpy as np
 import random
 import pickle
+import joblib 
 
 from sklearn import svm
 from sklearn.metrics import precision_score
 from sklearn.metrics import recall_score
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import MinMaxScaler
 
 GROUND_TRUTH_LABELS = {}
 
@@ -24,8 +26,8 @@ def split_training_and_testing_data():
     x = data.drop(["Label"], axis=1)
 
     # For reproducable results, set the seed value for train_test_split
-    random_seed = 45 # Precision: 0.333333; Recall = 0.600000
-    # random_seed = 22 # Precision: 0.666667; Recall = 0.500000
+    #random_seed = 45 # Precision: 0.333333; Recall = 0.600000
+    random_seed = 22 # Precision: 0.666667; Recall = 0.500000
     np.random.seed(random_seed)
     random.seed(random_seed)
 
@@ -63,17 +65,35 @@ def load_model():
 def train_model():
     
     x_train, x_test, y_train, y_test, train_file_names, test_file_names = split_training_and_testing_data()
+    print("Describe ",x_train.describe())
+    print("min ",x_train.min())
+    print("max: ",x_train.max())
+    print("Before scaling:")
+    print(x_train.head())
+
+    # Initialize the MinMaxScaler
+    scaler = MinMaxScaler()
+
+    # Fit the scaler to the training data and transform the training data
+    x_train_scaled = scaler.fit_transform(x_train)
+
+    # Transform the testing data using the same scaler
+    x_test_scaled = scaler.transform(x_test)
+    print("After scaling:")
+    print(pd.DataFrame(x_train_scaled, columns=x_train.columns).head())
 
     model = svm.SVC()
     
-    model.fit(x_train, y_train)
+    # Train the model with the scaled training data
+    model.fit(x_train_scaled, y_train)
 
-    evaluate_model(model, x_test, y_test)
+    evaluate_model(model, x_test_scaled, y_test)
     save_model(model)
-
-    #Get ground truth labels
+    joblib.dump(scaler, 'scaler.pkl')
+    
+    # Get ground truth labels
     data = pd.read_csv('feature_extraction/features.csv')
     GROUND_TRUTH_LABELS = dict(zip(data['fileName'], data['Label']))
     test_labels = {file: GROUND_TRUTH_LABELS[file] for file in test_file_names}
 
-    return x_train, x_test, y_train, y_test, model, train_file_names, test_file_names, test_labels
+    return x_train_scaled, x_test_scaled, y_train, y_test, model, train_file_names, test_file_names, test_labels
