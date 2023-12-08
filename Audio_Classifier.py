@@ -110,26 +110,20 @@ class AudioClassifierGUI:
 
                 # Find the row corresponding to the selected file
                 selected_row = features_data[features_data['fileName'] == selected_file]
+                print("Selected Row:")
+                print(selected_row)
 
                 if not selected_row.empty:
                     # Extract the features for the selected file
                     features = selected_row.drop(["Label", "fileName"], axis=1)
                     normalized_features = scaler.transform(features)
-                    """ dummy_data = {
-                    "Label": ["yes"],  
-                    "fileName": ["mu1.wav"], 
-                    "Avg_Energy": [0.013387602993281478],  
-                    "Spectral_Centroid": [7.236733455814755],
-                    "Zero_Crossing": [0.09323464117433852],
-                     }
-                    
-                    dummy_row = pd.DataFrame(dummy_data)
-
-                    features = dummy_row.drop(["Label", "fileName"], axis=1)"""
 
                     # Debugging message to check the loaded features
                     print("Loaded Features:")
                     print(features)
+                    print("Columns:")
+                    print(features_data.columns)
+
                     print("Normalized Features:")
                     print(normalized_features)
 

@@ -17,6 +17,9 @@ def split_training_and_testing_data():
     # Read the data
     data = pd.read_csv('feature_extraction/features.csv')
     GROUND_TRUTH_LABELS = dict(zip(data['fileName'], data['Label']))
+    print("Data: ")
+    print(data.head(2))
+
 
     # Replace labels with 0 for speech and 1 for music
     data["Label"] = (data["Label"] == "yes").astype(int)

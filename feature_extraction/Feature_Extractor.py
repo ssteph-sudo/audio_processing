@@ -4,6 +4,7 @@ import pandas as pd
 from .Feature_Extraction_Zero_Crossing_Rate import extract_zero_crossing
 from .Feature_Extraction_Spectral_Centroid import extract_spectral_centroid
 from .Feature_Extraction_Avg_Energy import extract_avg_energy
+from .Feature_MFCCS import extract_mfcc
 
 def generate_file_list(dir_path):
     print(f"Generating file list from directory: {dir_path}")
@@ -28,6 +29,9 @@ def pipeline(path, row):
 
         zero_crossing_feature = extract_zero_crossing(path)
         row.append(zero_crossing_feature)
+
+        mfcc_features = extract_mfcc(path)
+        row.extend(mfcc_features)  # Use extend instead of append
     except Exception as e:
         print(f"Error during feature extraction from {path}: {e}")
 
@@ -38,16 +42,17 @@ def generate_csv(dir_path):
     print(f"Path received in generate_csv: {dir_path}")
     data = []
     files = generate_file_list(dir_path)
-    headerList = ["fileName", "Avg_Energy", "Spectral_Centroid", "Zero_Crossing", "Label"]
+    headerList = ["fileName", "Avg_Energy", "Spectral_Centroid", "Zero_Crossing"]
+    headerList.extend([f"MFCC_{i+1}" for i in range(13)])  # Add headers for each MFCC feature
+    headerList.append("Label")
 
-    for filename in files:
-        row = [filename]
-        path = os.path.join(dir_path, filename)
-
-        label = determine_label(filename) 
-        row.append(label)
+    for path in files:
+        row = [os.path.basename(path)]  # Use only the filename
 
         pipeline(path, row)
+
+        label = determine_label(path)  # Determine label after feature extraction
+        row.append(label)
 
         data.append(row)
 
@@ -58,6 +63,6 @@ def generate_csv(dir_path):
     else:
         print(df.head())  # Print the first few rows of the DataFrame
 
-    output_path = 'features.csv'
+    output_path = 'feature_extraction/features.csv'
     df.to_csv(output_path, mode='w', index=False)
     print(f"Features saved to CSV file at: {output_path}")
