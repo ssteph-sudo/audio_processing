@@ -4,7 +4,12 @@
 # https://librosa.org/doc/main/generated/librosa.feature.spectral_centroid.html
 # https://youtu.be/j6NTatoi928
 
+# numerator = (amp1 * freq.1) + (amp2 *freq.2) + (ampN *freq.N)
+# denominator = amp1 + amp2 + amp3 + … ampN
+
 import librosa
+import numpy as np
+from numpy.fft import rfft
 
 FRAME_SIZE = 1024
 HOP_LENGTH = 512
