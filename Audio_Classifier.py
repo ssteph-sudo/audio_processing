@@ -5,6 +5,12 @@
 # To Run  #
 ###########
 
+# Option 1
+# Create a virtual environment
+# Activate the virtual environment
+# Run "python install_packages.py" to install the necessary packages
+
+# Option 2 (If you didn't use option 1)
 # Open Anaconda Navigator
 # Open Visual Studio Code through Anaconda
 # Navigate to and open the folder called "audio_processing"
