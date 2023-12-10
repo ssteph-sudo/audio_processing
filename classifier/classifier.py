@@ -30,18 +30,20 @@ def split_training_and_testing_data():
 
     # For reproducable results, set the seed value for train_test_split
     #random_seed = 45 # Precision: 0.333333; Recall = 0.600000
-    random_seed = 26 # Precision: 0.666667; Recall = 0.500000
+    random_seed = 28 # Precision: 0.666667; Recall = 0.500000
     np.random.seed(random_seed)
     random.seed(random_seed)
 
     # The directions say to use 1/3 of the data for testing and 2/3 for training
     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size = 0.33, random_state=random_seed)
 
-    # The directions say to indicate which of the files are used for training
-    print(x_train.sort_index()["fileName"])
-
     train_file_names = x_train['fileName'].tolist()
     test_file_names = x_test['fileName'].tolist()
+
+    print("\nTraining Files:")
+    print(train_file_names)
+    print("\nTesting Files:")
+    print(test_file_names)
 
     # Drop the fileName column
     x_train = x_train.drop(['fileName'], axis=1)
