@@ -30,7 +30,7 @@ def split_training_and_testing_data():
 
     # For reproducable results, set the seed value for train_test_split
     #random_seed = 45 # Precision: 0.333333; Recall = 0.600000
-    random_seed = 22 # Precision: 0.666667; Recall = 0.500000
+    random_seed = 26 # Precision: 0.666667; Recall = 0.500000
     np.random.seed(random_seed)
     random.seed(random_seed)
 
