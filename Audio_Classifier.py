@@ -1,18 +1,31 @@
+# Authors: Stephanie Murray and Breanna Powell
+# CSS 584: Assignment 4, Option 1 - Classifying audio as music (yes) or speech (no)
+
+###########
+# To Run  #
+###########
+
+# Open Anaconda Navigator
+# Open Visual Studio Code through Anaconda
+# Navigate to and open the folder called "audio_processing"
+# Open the terminal window
+# Install the following packages:
+#   $pip install pygame
+#   $pip install librosa
+#   $pip install sklearn
+# Other packages should be installed already
+
+# Use the following command to run:
+#   $python Audio_Classifier.py
+
 import os
 import tkinter as tk
 from tkinter import filedialog, Listbox, messagebox
 import pygame
-import threading
 import pandas as pd
-from sklearn import svm
-from sklearn.preprocessing import StandardScaler, MinMaxScaler
-from sklearn.model_selection import train_test_split
-import pickle
-import numpy as np
 from feature_extraction.Feature_Extractor import generate_csv
 from classifier.classifier import train_model 
 import joblib
-from tkinterdnd2 import DND_FILES, TkinterDnD
 
 class AudioClassifierGUI:
     def __init__(self, root):
