@@ -7,6 +7,7 @@
 
 # Option 1
 # Create a virtual environment
+#   $ python -m venv .venv
 # Activate the virtual environment
 # Run "python install_packages.py" to install the necessary packages
 
@@ -32,6 +33,7 @@ import pandas as pd
 from feature_extraction.Feature_Extractor import generate_csv
 from classifier.classifier import train_model 
 import joblib
+from sklearn.metrics import classification_report
 
 class AudioClassifierGUI:
     def __init__(self, root):
@@ -107,10 +109,14 @@ class AudioClassifierGUI:
     def extract_features_and_train(self, folder_path):
         generate_csv(folder_path)
         x_train, x_test, y_train, y_test, self.model, self.train_files, self.test_files, self.test_labels = train_model()
+        
         # Save the model for later use
         joblib.dump(self.model, 'audio_classifier_model.pkl')
-
         self.update_file_lists()
+
+        # Evaluate after training
+        self.evaluate_model_on_test_set()
+
 
     def update_file_lists(self):
           # Clear existing lists
@@ -187,6 +193,42 @@ class AudioClassifierGUI:
             # Play the audio file using pygame
             pygame.mixer.music.load(file_path)
             pygame.mixer.music.play()
+
+
+    def evaluate_model_on_test_set(self):
+        if not self.model:
+            self.model = joblib.load('audio_classifier_model.pkl')
+        scaler = joblib.load('scaler.pkl')
+
+        # Load all feature data
+        features_data = pd.read_csv('feature_extraction/features.csv')
+
+        y_true = []
+        y_pred = []
+
+        for file in self.test_files:
+            row = features_data[features_data['fileName'] == file]
+            if not row.empty and file in self.test_labels:
+                features = row.drop(["Label", "fileName"], axis=1)
+                normalized_features = scaler.transform(features)
+                prediction = self.model.predict(normalized_features)[0]
+
+                # Store ground truth and prediction
+                y_pred.append(prediction)
+                y_true.append(1 if self.test_labels[file] == "yes" else 0)
+            else:
+                print(f"Skipping {file} — missing features or label.")
+
+        # Create and print/save the report
+        report = classification_report(y_true, y_pred, target_names=["Speech", "Music"])
+        
+        print("\n=== Evaluation Metrics ===")
+        print(report)
+
+        # Save to file
+        with open("evaluation_metrics.txt", "w") as f:
+            f.write("=== Evaluation Metrics ===\n")
+            f.write(report)
     
     def print_summary(self):
         print("File, Model Output, Ground Truth Label")
