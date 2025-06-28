@@ -13,7 +13,7 @@ def install_package(package_name):
 def main():
     print("Checking and installing necessary Python packages for the Audio Classifier project...")
 
-    packages = ["pygame", "librosa", "scikit-learn"]
+    packages = ["pygame", "librosa", "scikit-learn", "pandas"]
 
     for package in packages:
         if is_package_installed(package):
